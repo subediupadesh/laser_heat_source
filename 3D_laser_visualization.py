@@ -32,8 +32,8 @@ def plot_gaussian_heat_distribution(A, C, power, absorptance, beam_radius, i):
     fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale=cmaps[i])])
 
     fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'),
-                      width=2500,  # Set width to 800 pixels
-                      height=1000)  # Set height to 600 pixels
+                      width=2500,
+                      height=2000) 
     return fig
 
 cm1.title('Gaussian and Flat-top Heat Source')
