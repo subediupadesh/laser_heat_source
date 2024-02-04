@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 ############################################################
 ## Visualization of Heat Source
 ############################################################
+st.set_page_config(layout="wide")
 
 cm1, cm2 = st.columns([0.2,0.8])
 
