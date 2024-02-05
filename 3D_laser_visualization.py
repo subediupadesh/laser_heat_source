@@ -55,7 +55,7 @@ i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
 
 fig = plot_gaussian_heat_distribution(A, C, k, power, eta, beam_radius, i)
 
-cm1.title(f'''Q = {A**(1/k)*power*k*eta/(math.gamma(1/k)* np.pi*(beam_radius*1e-6)**2):.2e}'''+r'''$$ W/m^2$$''')
+cm1.title(r'''$$Q_{peak}$$'''+ f'''= {A**(1/k)*power*k*eta/(math.gamma(1/k)* np.pi*(beam_radius*1e-6)**2):.2e}'''+r'''$$ W/m^2$$''')
 
 # Show the plot
 cm2.plotly_chart(fig, use_container_width=True)
