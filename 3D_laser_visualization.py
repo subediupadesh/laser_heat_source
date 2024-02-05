@@ -36,6 +36,10 @@ def plot_gaussian_heat_distribution(A, C, k, power, eta, beam_radius, i):
     fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'),
                       width=2500,
                       height=2000) 
+    fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
+    # fig.update_coloraxes(colorbar_exponentformat='e', colorbar_thickness=100)
+
+
     return fig
 
 cm1.title('super-Gaussian Heat Source')
