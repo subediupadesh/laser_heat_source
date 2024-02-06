@@ -1,57 +1,196 @@
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
+import math
+
 
 ############################################################
-## Visualization of Heat Source
+## Super-Gaussian Laser Heat Source with Gamma Function
 ############################################################
 st.set_page_config(layout="wide")
 
-cm1, cm2 = st.columns([0.2,0.8])
+inline_css = """div[data-testid="stExpander"] div[role="button"] p {font-size: 3rem;}"""
+st.markdown(f"<style>{inline_css}</style>", unsafe_allow_html=True)
 
-def gaussian_3d(A, C, x, y, power, absorptance, beam_radius):
-    beam_radius = beam_radius*1.0e-6 ## converting to micrometer
-    absorptance = absorptance*1.0e7  # converting to 1.0e7 /m
 
-    r = (x**2 + y**2)**0.5
-    F = np.where(beam_radius - r < 0, 0, 1)
+with st.expander('Click for: Super-Gaussian Laser Heat Source with Gamma Function', expanded=True):
+    st.title('Super-Gaussian Heat Source with Gamma Function')
+    cm1, cm2 = st.columns([0.2,0.8])
 
-    # return power * absorptance * np.exp(-(x**2 + y**2) / (2 * beam_radius**2))
-    return F*((A*power*absorptance)/(np.pi*beam_radius**2))*np.exp(-C*(x**2 + y**2)/beam_radius**2)
+    def plot_gaussian_heat_distribution(A, C, k, P, eta, r_0, i):
+        r0 = r_0*1.0e-6 ## converting to micrometer
+        cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
+        x = np.linspace(-200e-6, 200e-6, 100)
+        y = np.linspace(-200e-6, 200e-6, 100)
+        x, y = np.meshgrid(x, y)
 
-def plot_gaussian_heat_distribution(A, C, power, absorptance, beam_radius, i):
-    # Generate data
-    x = np.linspace(-400e-6, 400e-6, 100)
-    y = np.linspace(-400e-6, 400e-6, 100)
-    x, y = np.meshgrid(x, y)
-    z = gaussian_3d(A, C, x, y, power, absorptance, beam_radius)
+        r = (x**2 + y**2)**0.5
+        F = np.where(r_0 - r < 0, 0, 1)
+        cm1.write(r'$\Gamma(1/k) = $ '+f'{math.gamma(1/k):.3f}')
+        
+        Q = F*((A**(1/k)*k*P*eta)/(np.pi*r0**2*math.gamma(1/k)))*(np.exp(-C*(r**2/r0**2)**k))
+        
+        cm1.write('Colormap: '+cmaps[i])
+        fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
+        fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2500, height=2000) 
+        fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
+        return fig, Q
+
+    cm1.header('Parameters')
+    power = cm1.slider(r'''Power $$(P)$$''', min_value=1, max_value=5000, value=1000, step=1)
+    eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.9, step=0.001)
+    beam_radius = cm1.slider(r'''Beam Radius $$(r_0$$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=122.5, step=0.01)
+    A = cm1.slider(r'''Constant $$(A)$$''', min_value=0.00001, max_value=5.0, value=2.0, step=0.0001)
+    C = cm1.slider(r'''Constant $$(C)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.0001)
+    k = cm1.slider(r'''Constant $$(k)$$''', min_value=0.0000001, max_value=10.0, value=3.0, step=0.0001)
+    i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
+
+    fig, Q = plot_gaussian_heat_distribution(A, C, k, power, eta, beam_radius, i)
+
+    cm2.title(r'$Q =  \frac{A^{1/k}Pk\eta}{\pi r_o^2 \Gamma(1/k)} \exp\left[-C(\frac{r^2}{r_0^2})^{k}\right]$')
+    cm2.title(r'$\Gamma(1/k) =  \int_0^\infty t^{\frac{1}{k}-1} e^{-t} dt$')
+    cm2.header(r'$Q_{peak} =$  '+f'{np.max(Q):.3e}'+r'  $W/m^2$')
+
+    cm2.plotly_chart(fig, use_container_width=True)
+    st.divider()
+
+
+
+############################################################################
+## Visualization of Double Ellipsoide with Super Gamma Function Heat Source
+############################################################################
+
+
+with st.expander('Click for: Double Ellipsoide Laser Heat Source with Gamma Function'):
+    st.title('Double Ellipsoide Heat Source with Gamma Function')
+
+    cm3, cm4 = st.columns([0.2,0.8])
+
+    def plot_double_ellipsoide_heat_distribution(P, eta, a_f_DE, a_r_DE, b_DE, c_DE, f_f, f_r, A, C, k, i):
+        a_f, a_r, b, c = a_f_DE*1e-6, a_r_DE*1e-6, b_DE*1e-6, c_DE*1e-6  # scaling unit to micro meter
+
+        cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
+        cm3.write('Colormap: '+cmaps[i])
+
+        x = np.linspace(-400e-6, 400e-6, 100)
+        y = np.linspace(-200e-6, 200e-6, 100)
+        x, y = np.meshgrid(x, y)
+
+        r = (x**2 + y**2)**0.5
+        F = np.where((a_f_DE+a_r_DE) - r < 0, 0, 1)
+        Qf  =  F*((A**(1/k)*k*f_f*eta*P)/(a_f*b*math.gamma(1/k)*(np.pi)**1.5))*np.exp(-C*(x**2/a_f**2)**k-C*(y**2/b**2)**k)
+        Qr  =  F*((A**(1/k)*k*f_r*eta*P)/(a_r*b*math.gamma(1/k)*(np.pi)**1.5))*np.exp(-C*(x**2/a_r**2)**k-C*(y**2/b**2)**k)
+        
+        Q = Qf+Qr
+        fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
+        fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2500, height=2000) 
+        fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
+        return Q, fig 
+
+
+    cm3.header('Parameters')
+
+    P_DE = cm3.slider(r'$Power \, \, (P)$', min_value=1, max_value=5000, value=1000, step=1)
+    eta_DE = cm3.slider(r'$Efficiency \, \, (\eta)$', min_value=0.0, max_value=1.0, value=0.9, step=0.001)
+    a_f_DE = cm3.slider(r'$a_f \, \, (\mu m)$', min_value=10.0, max_value=500.0, value=250.0, step=0.01)
+    a_r_DE = cm3.slider(r'$a_r \, \, (\mu m)$', min_value=10.0, max_value=500.0, value=100.0, step=0.01)
+    b_DE = cm3.slider(r'$b \,\, (\mu m)$', min_value=10.0, max_value=500.0, value=150.0, step=0.01)
+    # c_DE = cm3.slider(r'''c $$(c$$ $$\mu m)$$''', min_value=10.0, max_value=500.0, value=70.0, step=0.01)
+    c_DE = 70.0
+    A_DE = cm3.slider(r'$A$', min_value=0.00001, max_value=50.0, value=6*3**0.5, step=0.0001)
+    C_DE = cm3.slider(r'$C$', min_value=0.0, max_value=10.0, value=3.0, step=0.0001)
+    k_DE = cm3.slider(r'$k$', min_value=0.00001, max_value=10.0, value=1.0, step=0.0001)
+    i_DE = cm3.slider('colormap', min_value=0, max_value=9, value=4, step=1)
+    f_f_DE = 2*a_f_DE/(a_f_DE+a_r_DE)
+    f_r_DE = 2*a_r_DE/(a_f_DE+a_r_DE)
+
+    Q_DE, fig_DE = plot_double_ellipsoide_heat_distribution(P_DE, eta_DE, a_f_DE, a_r_DE, b_DE, c_DE, f_f_DE, f_r_DE, A_DE, C_DE, k_DE, i_DE)
+
+    cm4.title(r'$Q = Q_f + Q_r $')
+    cm4.title(r'''$$Q_f =  \frac{A^{1/k}Pk\eta f_f}{a_f b \pi \sqrt{\pi} \Gamma(1/k)} \exp\left[-C\left(\frac{x^2}{a_f^2}\right)^{k}-C\left(\frac{y^2}{b^2}\right)^{k}\right]   $$''')
+    cm4.title(r'''$$Q_r =  \frac{A^{1/k}Pk\eta f_r}{a_r b \pi \sqrt{\pi} \Gamma(1/k)} \exp\left[-C\left(\frac{x^2}{a_r^2}\right)^{k}-C\left(\frac{y^2}{b^2}\right)^{k}\right]   $$''')
+    cm4.header(r'$f_{f|r} = \frac{2a_{f|r}}{a_f + a_r}$')
+    cm4.title(r'$Q_{max} =$ '+f'{np.max(Q_DE):.3e} ' +r'$W/m^2$')
+
+    cm4.plotly_chart(fig_DE, use_container_width=True)
+    st.divider()
+
+
+
+############################################################################
+## Visualization of Double Ellipsoide in 2D
+############################################################################
+
+with st.expander('Click for: Pure Double Ellipsoide Laser Heat Source in 2D'):
+
+    st.title('Double Ellipsoide Heat Source in 2D')
+    cm5, cm6 = st.columns([0.2,0.8])
+
+    def plot_double_ellipsoide_super_gaussian_heat_distribution(P, eta, a_f_DEsG, a_r_DEsG, b_DEsG, f_f, f_r, A, C, i):
+        a_f, a_r, b = a_f_DEsG*1e-6, a_r_DEsG*1e-6, b_DEsG*1e-6,  # scaling unit to micro meter
+
+        cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
+        cm5.write('Cmap: '+cmaps[i])
+
+        x = np.linspace(-400e-6, 400e-6, 100)
+        y = np.linspace(-200e-6, 200e-6, 100)
+        x, y= np.meshgrid(x, y)
+
+        r = (x**2 + y**2)**0.5
+        F = np.where((a_f_DEsG+a_r_DEsG) - r < 0, 0, 1)
+        Qf  =  F*((A*f_f*eta*P)/(a_f*b*(np.pi)**1.5))*np.exp(-C*(x**2/a_f**2)-C*(y**2/b**2)) # For pure Double Ellipsoide
+        Qr  =  F*((A*f_r*eta*P)/(a_r*b*(np.pi)**1.5))*np.exp(-C*(x**2/a_r**2)-C*(y**2/b**2)) # For pure Double Ellipsoide
+        
+        Q = Qf+Qr
+        fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
+        fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2500, height=2000) 
+        fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
+        return fig, Q
+
+    cm5.header('Parameters')
+
+    P_DEsG = cm5.slider(r'$Power \, \, [P]$', min_value=1, max_value=5000, value=1000, step=1)
+    eta_DEsG = cm5.slider(r'$Efficiency \, \, [\eta]$', min_value=0.0, max_value=1.0, value=0.9, step=0.0001)
+    a_f_DEsG = cm5.slider(r'$a_f \, \, [\mu m]$', min_value=10.0, max_value=500.0, value=200.0, step=0.01)
+    a_r_DEsG = cm5.slider(r'$a_r \, \, [\mu m]$', min_value=10.0, max_value=500.0, value=75.0, step=0.01)
+    b_DEsG = cm5.slider(r'$b \,\, [\mu m]$', min_value=10.0, max_value=500.0, value=125.0, step=0.01)
+    # c_DEsG = cm5.slider(r'$c \, \, [\mu m]$', min_value=10.0, max_value=500.0, value=70.0, step=0.01)
+    # c_DEsG = 70.0
+    A_DEsG = 6.0*np.sqrt(3)
+    C_DEsG = 3.0
+    i_DEsG = cm5.slider('Cmap', min_value=0, max_value=9, value=2, step=1)
+    f_f_DEsG = 2*a_f_DEsG/(a_f_DEsG+a_r_DEsG)
+    f_r_DEsG = 2*a_r_DEsG/(a_f_DEsG+a_r_DEsG)
+
+    fig_sG, Q_sG = plot_double_ellipsoide_super_gaussian_heat_distribution(P_DEsG, eta_DEsG, a_f_DEsG, a_r_DEsG, b_DEsG, f_f_DEsG, f_r_DEsG, A_DEsG, C_DEsG, i_DEsG)
+
+    cm6.title(r'$Q = Q_f + Q_r $')
+    cm6.header(r'$Q_f =  \frac{6\sqrt{3}P\eta f_f}{a_f b \pi \sqrt{\pi} } \exp\left[-3\left(\frac{x^2}{a_f^2}\right)-3\left(\frac{y^2}{b^2}\right)\right]$')
+    cm6.header(r'$Q_r =  \frac{6\sqrt{3}P\eta f_r}{a_r b \pi \sqrt{\pi} } \exp\left[-3\left(\frac{x^2}{a_r^2}\right)-3\left(\frac{y^2}{b^2}\right)\right]$')
+    cm6.header(r'$f_{f|r} = \frac{2a_{f|r}}{a_f + a_r}$')
+
+    cm6.title(r'$Q_{max} =$ '+f'{np.max(Q_sG):.3e} ' +r'$W/m^2$')
+
+    cm6.plotly_chart(fig_sG, use_container_width=True)
+
+
+############################################################################
+## Visualization of Bessel Laser Heat Source
+############################################################################
+
+
+with st.expander('Click for: Bessel Laser Heat Source'):
+    st.title('Bessle Ellipsoide Heat Source')
+    cm7, cm8 = st.columns([0.2,0.8])
+
+
+
+
+
+
+
+
+## Double Ellipsoide https://www.tandfonline.com/doi/epdf/10.1080/17445302.2014.937059?needAccess=true
+
+## Inverse Gaussian Ring, Bessel https://link.springer.com/article/10.1007/s11837-023-06363-8
     
-    cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
-    # i=6
-    cm1.write('Colormap: '+cmaps[i])
-    fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale=cmaps[i])])
-
-    fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'),
-                      width=2500,
-                      height=2000) 
-    return fig
-
-cm1.title('Gaussian and Flat-top Heat Source')
-
-cm2.title(r'''$$Q =  \frac{AP\alpha}{\pi r_o^2} \exp(\frac{-Cr^2}{r_0^2})   $$''')
-
-cm1.header('Parameters')
-power = cm1.slider(r'''Power $$(P)$$''', min_value=1, max_value=5000, value=1000, step=1)
-absorptance = cm1.slider(r'''Absorptance $$(\alpha)$$ $$[\times 10^7 /m]$$''', min_value=1.0, max_value=1.0e2, value=8.5, step=1.0)
-beam_radius = cm1.slider(r'''Beam Radius $$(r_0$$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=222.5, step=0.01)
-A = cm1.slider(r'''Constant $$(A)$$''', min_value=0.00001, max_value=5.0, value=2.0, step=0.0001)
-C = cm1.slider(r'''Constant $$(C)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.0001)
-i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
-
-fig = plot_gaussian_heat_distribution(A, C, power, absorptance, beam_radius, i)
-
-
-
-# Show the plot
-cm2.plotly_chart(fig, use_container_width=True)
-
