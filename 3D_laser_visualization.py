@@ -4,17 +4,23 @@ import plotly.graph_objects as go
 import math
 
 
-############################################################
-## Super-Gaussian Laser Heat Source with Gamma Function
-############################################################
+
+
 st.set_page_config(layout="wide")
 
 inline_css = """div[data-testid="stExpander"] div[role="button"] p {font-size: 3rem;}"""
 st.markdown(f"<style>{inline_css}</style>", unsafe_allow_html=True)
 
+url1 = 'https://link.springer.com/article/10.1007/s11837-023-06363-8'
+url2 = 'https://doi.org/10.1080/17445302.2014.937059'
+st.write(f'Reference for Equations used in visualization of laser heat soruces: [Super Gaussian]({url1}), [Double Ellipsoide]({url2}), [Ring]({url1}), [Bessel]({url1})')
+
+############################################################
+## Super-Gaussian Laser Heat Source with Gamma Function
+############################################################
 
 with st.expander('Click for: Super-Gaussian Laser Heat Source with Gamma Function | Flat Top ', expanded=False):
-    st.title('Super-Gaussian Heat Source with Gamma Function | Flat Top')
+    st.title(f'[Super-Gaussian Heat Source with Gamma Function | Flat Top]({url1})')
     cm1, cm2 = st.columns([0.2,0.8])
 
     def plot_gaussian_heat_distribution(A, C, k, P, eta, r_0, i):
@@ -62,7 +68,7 @@ with st.expander('Click for: Super-Gaussian Laser Heat Source with Gamma Functio
 
 
 with st.expander('Click for: Double Ellipsoide Laser Heat Source with Gamma Function'):
-    st.title('Double Ellipsoide Heat Source with Gamma Function')
+    st.title(f'Double Ellipsoide Heat Source with Gamma Function')
 
     cm3, cm4 = st.columns([0.2,0.8])
 
@@ -123,7 +129,7 @@ with st.expander('Click for: Double Ellipsoide Laser Heat Source with Gamma Func
 
 with st.expander('Click for: Pure Double Ellipsoide Laser Heat Source in 2D'):
 
-    st.title('Double Ellipsoide Heat Source in 2D')
+    st.title(f'[Double Ellipsoide Heat Source in 2D]({url2})')
     cm5, cm6 = st.columns([0.2,0.8])
 
     def plot_double_ellipsoide_super_gaussian_heat_distribution(P, eta, a_f_DEsG, a_r_DEsG, b_DEsG, f_f, f_r, A, C, i):
@@ -180,7 +186,7 @@ with st.expander('Click for: Pure Double Ellipsoide Laser Heat Source in 2D'):
 
 
 with st.expander('Click for: Ring Laser Heat Source'):
-    st.title('Ring Heat Source')
+    st.title(f'[Ring Heat Source]({url1})')
     cm7, cm8 = st.columns([0.2,0.8])
 
     def plot_ring_heat_distribution(P, eta, r_0, r_t, A, C, i ):
@@ -234,7 +240,7 @@ with st.expander('Click for: Ring Laser Heat Source'):
 
 
 with st.expander('Click for: Bessel Laser Heat Source', expanded=True):
-    st.title('Bessel Heat Source')
+    st.title(f'[Bessel Heat Source]({url1})')
     cm9, cm10 = st.columns([0.2,0.8])
 
     def plot_bessel_heat_distribution(P1, P2, eta, r_0, r_1, r_2, A, C1, C2, i ):
