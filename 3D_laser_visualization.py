@@ -285,7 +285,7 @@ with st.expander('Click for: Bessel Laser Heat Source', expanded=True):
     cm10.title(r'$Q_1 =  \frac{AP_1\eta}{\sqrt{2\pi ^3} r_1^2} \exp\left[-C_1\left(\frac{r^2}{2r_1^2}\right)\right]$')
     cm10.title(r'$Q_2 =  \frac{AP_2\eta}{\sqrt{2\pi ^3} r_2^2 \text{Y}(r_0,r_2)} \exp\left[-C_2\left(\frac{(r-r_0)^2}{2r_2^2}\right)\right]$')
     cm10.title(r'$\text{Y}(r_0,r_2) =  \exp\left(\frac{-r_0^2}{2r_2^2}\right) +\frac{r_0}{r_2}\sqrt{\frac{\pi}{2}}\, \text{erfc}(\frac{-r_0}{\sqrt{2}r_2}) $')
-    cm10.header(r'$Q_{peak} =$  '+f'{np.max(Q_Bessel):.3e}'+r'  $W/m^2$')
+    cm10.header(r'$Q_{peak} =  Q_1 + Q_2  =$  '+f'{np.max(Q_Bessel):.3e}'+r'  $W/m^2$')
     cm10.plotly_chart(fig_Bessel, use_container_width=True)
     st.divider()
 
