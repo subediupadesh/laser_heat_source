@@ -3,9 +3,6 @@ import numpy as np
 import plotly.graph_objects as go
 import math
 
-
-
-
 st.set_page_config(layout="wide")
 
 inline_css = """div[data-testid="stExpander"] div[role="button"] p {font-size: 3rem;}"""
