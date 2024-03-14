@@ -172,7 +172,7 @@ with st.expander('Click for: Pure Double Ellipsoide Laser Heat Source in 2D'):
     cm6.title(r'$Q_{max} =$ '+f'{np.max(Q_sG):.3e} ' +r'$W/m^2$')
 
     cm6.plotly_chart(fig_sG, use_container_width=True)
-
+    st.divider()
 
 ############################################################################
 ## Visualization of Ring Laser Heat Source
@@ -226,6 +226,72 @@ with st.expander('Click for: Ring Laser Heat Source'):
     cm8.title(r'$\text{Y}(r_0,r_t) =  \exp\left(\frac{-r_0^2}{2r_t^2}\right) +\frac{r_0}{r_t}\sqrt{\frac{\pi}{2}}\, \text{erfc}(\frac{-r_0}{\sqrt{2}r_t}) $')
     cm8.header(r'$Q_{peak} =$  '+f'{np.max(Q_Ring):.3e}'+r'  $W/m^2$')
     cm8.plotly_chart(fig_Ring, use_container_width=True)
+    st.divider()
+
+
+
+############################################################################
+## Visualization of Bessel Laser Heat Source
+############################################################################
+
+
+with st.expander('Click for: Bessel Laser Heat Source'):
+    st.title('Bessel Heat Source')
+    cm9, cm10 = st.columns([0.2,0.8])
+
+    def plot_bessel_heat_distribution(P1, P2, eta, r_0, r_1, r_2, A, C1, C2, i ):
+        r0, r1, r2 = r_0*1.0e-6, r_1*1.0e-6, r_2*1.0e-6  # scaling unit to micro meter
+
+        cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
+        cm9.write('Cmap: '+cmaps[i])
+
+        x = np.linspace(-400e-6, 400e-6, 200)
+        y = np.linspace(-400e-6, 400e-6, 200)
+        x, y= np.meshgrid(x, y)
+
+
+        r = (x**2 + y**2)**0.5
+        F = np.where(r_0 - r < 0, 0, 1)
+        Y = np.exp(-r0**2/(2*r2**2)) + (r0/r2)*(np.pi/2)**0.5 * math.erfc(-r0/(r2*2**0.5))
+
+        Q1 = F*((A*P1*eta)/((2*np.pi**3)**0.5*r1**2)) * (np.exp(-C1*((r)**2/(2*r1**2))))
+        Q2 = F*((A*P2*eta)/((2*np.pi**3)**0.5*r2**2 * Y)) * (np.exp(-C2*((r-r0)**2/(2*r2**2))))
+        Q = Q1 + Q2
+
+        fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
+        fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2500, height=2000) 
+        fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
+        return fig, Q
+
+
+    cm9.header('Parameters')
+
+    P1_Bessel = cm9.slider(r'$Power Inside \, \, [P1]$', min_value=1, max_value=5000, value=1000, step=1)
+    P2_Bessel = cm9.slider(r'$Power Ring \, \, [P2]$', min_value=1, max_value=5000, value=1000, step=1)
+    eta_Bessel = cm9.slider(r'$Efficiency \, \, [\eta  ]$', min_value=0.0, max_value=1.0, value=0.9, step=0.0001)
+    Bessel_radius = cm9.slider(r'''Beam Radius $$(r_0  $$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=222.5, step=0.01)
+    Bessel_in_thickness = cm9.slider(r'''Beam ring thickness $$(r_1$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=100.0, step=0.01)
+    Bessel_out_thickness = cm9.slider(r'''Beam ring thickness $$(r_2$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=20.0, step=0.01)
+
+    # c_Ring = cm9.slider(r'$c \, \, [\mu m]$', min_value=10.0, max_value=500.0, value=70.0, step=0.01)
+    # c_Ring = 70.0
+
+    A_Bessel = cm9.slider(r'''Constant $$(A )$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
+    # B_Bessel = cm9.slider(r'''Constant $$(B)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
+    C1_Bessel = cm9.slider(r'''Constant $$(C_1)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.0001)
+    C2_Bessel = cm9.slider(r'''Constant $$(C_2)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.0001)
+    i_Bessel = cm9.slider('Cmap  ', min_value=0, max_value=9, value=7, step=1)
+
+    fig_Bessel, Q_Bessel = plot_bessel_heat_distribution(P1_Bessel, P2_Bessel, eta_Bessel, Bessel_radius, Bessel_in_thickness, Bessel_out_thickness, A_Bessel, C1_Bessel, C2_Bessel, i_Bessel )
+
+    cm10.title(r'$Q_1 =  \frac{AP_1\eta}{\sqrt{2\pi ^3} r_1^2} \exp\left[-C_1\left(\frac{r^2}{2r_1^2}\right)\right]$')
+    cm10.title(r'$Q_2 =  \frac{AP_2\eta}{\sqrt{2\pi ^3} r_2^2 \text{Y}(r_0,r_2)} \exp\left[-C_2\left(\frac{(r-r_0)^2}{2r_2^2}\right)\right]$')
+    cm10.title(r'$\text{Y}(r_0,r_2) =  \exp\left(\frac{-r_0^2}{2r_2^2}\right) +\frac{r_0}{r_2}\sqrt{\frac{\pi}{2}}\, \text{erfc}(\frac{-r_0}{\sqrt{2}r_2}) $')
+    cm10.header(r'$Q_{peak} =$  '+f'{np.max(Q_Bessel):.3e}'+r'  $W/m^2$')
+    cm10.plotly_chart(fig_Bessel, use_container_width=True)
+    st.divider()
+
+
 
 
 ## Double Ellipsoide https://www.tandfonline.com/doi/epdf/10.1080/17445302.2014.937059?needAccess=true
