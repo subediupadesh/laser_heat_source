@@ -8,16 +8,17 @@ st.set_page_config(layout="wide")
 inline_css = """div[data-testid="stExpander"] div[role="button"] p {font-size: 3rem;}"""
 st.markdown(f"<style>{inline_css}</style>", unsafe_allow_html=True)
 
-url1 = 'https://link.springer.com/article/10.1007/s11837-023-06363-8'
-url2 = 'https://doi.org/10.1080/17445302.2014.937059'
-st.write(f'Reference for Equations used in visualization of laser heat soruces: [Super Gaussian]({url1}), [Double Ellipsoide]({url2}), [Ring]({url1}), [Bessel]({url1})')
+url1 = 'https://link.springer.com/article/10.1007/s11837-023-06363-8' # Bessel, Ring
+url2 = 'https://doi.org/10.1080/17445302.2014.937059' # Double Ellipsoide
+url3 = 'https://doi.org/10.1080/17452759.2024.2308513' # Super Gaussian
+st.write(f'Reference for Equations used in visualization of laser heat soruces: [Super Gaussian]({url3}), [Double Ellipsoide]({url2}), [Ring]({url1}), [Bessel]({url1})')
 
 ############################################################
 ## Super-Gaussian Laser Heat Source with Gamma Function
 ############################################################
 
 with st.expander('Click for: Super-Gaussian Laser Heat Source with Gamma Function | Flat Top ', expanded=False):
-    st.title(f'[Super-Gaussian Heat Source with Gamma Function | Flat Top]({url1})')
+    st.title(f'[Super-Gaussian Heat Source with Gamma Function | Flat Top]({url3})')
     cm1, cm2 = st.columns([0.2,0.8])
 
     def plot_gaussian_heat_distribution(A, C, k, P, eta, r_0, i):
