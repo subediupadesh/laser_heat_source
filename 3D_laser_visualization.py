@@ -11,7 +11,8 @@ st.markdown(f"<style>{inline_css}</style>", unsafe_allow_html=True)
 url1 = 'https://link.springer.com/article/10.1007/s11837-023-06363-8' # Bessel, Ring
 url2 = 'https://doi.org/10.1080/17445302.2014.937059' # Double Ellipsoide
 url3 = 'https://doi.org/10.1080/17452759.2024.2308513' # Super Gaussian
-st.write(f'Reference for Equations used in visualization of laser heat soruces: [Super Gaussian]({url3}), [Double Ellipsoide]({url2}), [Ring]({url1}), [Bessel]({url1})')
+url4 = 'https://doi.org/10.1016/j.matpr.2020.12.842' # Volumetric Gaussian
+st.write(f'Reference for Equations used in visualization of laser heat soruces: [Super Gaussian]({url3}), [Double ]({url2}) [Ellipsoide]({url4}), [Ring]({url1}), [Bessel]({url1})')
 
 ############################################################
 ## Super-Gaussian Laser Heat Source with Gamma Function
@@ -127,7 +128,7 @@ with st.expander('Click for: Double Ellipsoide Laser Heat Source with Gamma Func
 
 with st.expander('Click for: Pure Double Ellipsoide Laser Heat Source in 2D'):
 
-    st.title(f'[Double Ellipsoide Heat Source in 2D]({url2})')
+    st.title(f'[Double Ellipsoide]({url2}) [Heat Source in 2D]({url4})')
     cm5, cm6 = st.columns([0.2,0.8])
 
     def plot_double_ellipsoide_super_gaussian_heat_distribution(P, eta, a_f_DEsG, a_r_DEsG, b_DEsG, f_f, f_r, A, C, i):
