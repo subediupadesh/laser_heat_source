@@ -237,12 +237,69 @@ with st.expander('Click for: Ring Laser Heat Source'):
 ## Visualization of Bessel Laser Heat Source
 ############################################################################
 
+################# Bessel only with Gaussian Inner Beam  ####################
+    
+# with st.expander('Click for: Bessel Laser Heat Source', expanded=True):
+#     st.title(f'[Bessel Heat Source]({url1})')
+#     cm9, cm10 = st.columns([0.2,0.8])
 
-with st.expander('Click for: Bessel Laser Heat Source', expanded=True):
-    st.title(f'[Bessel Heat Source]({url1})')
+#     def plot_bessel_heat_distribution(P1, P2, eta, r_0, r_1, r_2, A, C1, C2, i ):
+#         r0, r1, r2 = r_0*1.0e-6, r_1*1.0e-6, r_2*1.0e-6  # scaling unit to micro meter
+
+#         cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
+#         cm9.write('Cmap: '+cmaps[i])
+
+#         x = np.linspace(-400e-6, 400e-6, 200)
+#         y = np.linspace(-400e-6, 400e-6, 200)
+#         x, y= np.meshgrid(x, y)
+
+
+#         r = (x**2 + y**2)**0.5
+#         F = np.where(r_0 - r < 0, 0, 1)
+#         Y = np.exp(-r0**2/(2*r2**2)) + (r0/r2)*(np.pi/2)**0.5 * math.erfc(-r0/(r2*2**0.5))
+
+#         Q1 = F*((A*P1*eta)/((2*np.pi**3)**0.5*r1**2)) * (np.exp(-C1*((r)**2/(2*r1**2))))
+#         Q2 = F*((A*P2*eta)/((2*np.pi**3)**0.5*r2**2 * Y)) * (np.exp(-C2*((r-r0)**2/(2*r2**2))))
+#         Q = Q1 + Q2
+
+#         fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
+#         fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2500, height=2000) 
+#         fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
+#         return fig, Q
+
+#     cm9.header('Parameters')
+
+#     P1_Bessel = cm9.slider(r'$Power Inside \, \, [P1]$', min_value=1, max_value=5000, value=1000, step=1)
+#     P2_Bessel = cm9.slider(r'$Power Ring \, \, [P2]$', min_value=1, max_value=5000, value=1000, step=1)
+#     eta_Bessel = cm9.slider(r'$Efficiency \, \, [\eta  ]$', min_value=0.0, max_value=1.0, value=0.9, step=0.0001)
+#     Bessel_radius = cm9.slider(r'''Beam Radius $$(r_0  $$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=222.5, step=0.01)
+#     Bessel_in_thickness = cm9.slider(r'''Beam ring thickness $$(r_1$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=100.0, step=0.01)
+#     Bessel_out_thickness = cm9.slider(r'''Beam ring thickness $$(r_2$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=20.0, step=0.01)
+
+#     # c_Ring = cm9.slider(r'$c \, \, [\mu m]$', min_value=10.0, max_value=500.0, value=70.0, step=0.01)
+#     # c_Ring = 70.0
+
+#     A_Bessel = cm9.slider(r'''Constant $$(A )$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
+#     # B_Bessel = cm9.slider(r'''Constant $$(B)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
+#     C1_Bessel = cm9.slider(r'''Constant $$(C_1)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.0001)
+#     C2_Bessel = cm9.slider(r'''Constant $$(C_2)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.0001)
+#     i_Bessel = cm9.slider('Cmap  ', min_value=0, max_value=9, value=7, step=1)
+
+#     fig_Bessel, Q_Bessel = plot_bessel_heat_distribution(P1_Bessel, P2_Bessel, eta_Bessel, Bessel_radius, Bessel_in_thickness, Bessel_out_thickness, A_Bessel, C1_Bessel, C2_Bessel, i_Bessel )
+
+#     cm10.title(r'$Q_1 =  \frac{AP_1\eta}{\sqrt{2\pi ^3} r_1^2} \exp\left[-C_1\left(\frac{r^2}{2r_1^2}\right)\right]$')
+#     cm10.title(r'$Q_2 =  \frac{AP_2\eta}{\sqrt{2\pi ^3} r_2^2 \text{Y}(r_0,r_2)} \exp\left[-C_2\left(\frac{(r-r_0)^2}{2r_2^2}\right)\right]$')
+#     cm10.title(r'$\text{Y}(r_0,r_2) =  \exp\left(\frac{-r_0^2}{2r_2^2}\right) +\frac{r_0}{r_2}\sqrt{\frac{\pi}{2}}\, \text{erfc}(\frac{-r_0}{\sqrt{2}r_2}) $')
+#     cm10.header(r'$Q_{peak} =  Q_1 + Q_2  =$  '+f'{np.max(Q_Bessel):.3e}'+r'  $W/m^2$')
+#     cm10.plotly_chart(fig_Bessel, use_container_width=True)
+#     st.divider()
+
+################# Bessel with Super Gaussian Inner Beam  ####################
+with st.expander('Click for: Bessel Laser Heat Source With Super Gaussian Inner Beam', expanded=True):
+    st.title(f'[Bessel Heat Source With Super Gaussian Inner Beam]({url1})')
     cm9, cm10 = st.columns([0.2,0.8])
 
-    def plot_bessel_heat_distribution(P1, P2, eta, r_0, r_1, r_2, A, C1, C2, i ):
+    def plot_bessel_heat_distribution(P1, P2, eta, r_0, r_1, r_2, k, A, C, C1, C2, i ):
         r0, r1, r2 = r_0*1.0e-6, r_1*1.0e-6, r_2*1.0e-6  # scaling unit to micro meter
 
         cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
@@ -257,14 +314,14 @@ with st.expander('Click for: Bessel Laser Heat Source', expanded=True):
         F = np.where(r_0 - r < 0, 0, 1)
         Y = np.exp(-r0**2/(2*r2**2)) + (r0/r2)*(np.pi/2)**0.5 * math.erfc(-r0/(r2*2**0.5))
 
-        Q1 = F*((A*P1*eta)/((2*np.pi**3)**0.5*r1**2)) * (np.exp(-C1*((r)**2/(2*r1**2))))
-        Q2 = F*((A*P2*eta)/((2*np.pi**3)**0.5*r2**2 * Y)) * (np.exp(-C2*((r-r0)**2/(2*r2**2))))
+        Q1 = F*((A**(1/k)*k*C*P1*eta)/((2*np.pi**3)**0.5*r1**2*math.gamma(1/k))) * (np.exp(-C1*((r)**2/(2*r1**2))**k))
+        Q2 = F*((C*P2*eta)/((2*np.pi**3)**0.5*r2**2 * Y)) * (np.exp(-C2*((r-r0)**2/(2*r2**2))))
         Q = Q1 + Q2
 
         fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
         fig.update_layout(scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2500, height=2000) 
         fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
-        return fig, Q
+        return fig, np.max(Q), np.max(Q1), np.max(Q2)
 
 
     cm9.header('Parameters')
@@ -272,25 +329,29 @@ with st.expander('Click for: Bessel Laser Heat Source', expanded=True):
     P1_Bessel = cm9.slider(r'$Power Inside \, \, [P1]$', min_value=1, max_value=5000, value=1000, step=1)
     P2_Bessel = cm9.slider(r'$Power Ring \, \, [P2]$', min_value=1, max_value=5000, value=1000, step=1)
     eta_Bessel = cm9.slider(r'$Efficiency \, \, [\eta  ]$', min_value=0.0, max_value=1.0, value=0.9, step=0.0001)
-    Bessel_radius = cm9.slider(r'''Beam Radius $$(r_0  $$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=222.5, step=0.01)
-    Bessel_in_thickness = cm9.slider(r'''Beam ring thickness $$(r_1$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=100.0, step=0.01)
-    Bessel_out_thickness = cm9.slider(r'''Beam ring thickness $$(r_2$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=20.0, step=0.01)
+    Bessel_radius = cm9.slider(r'''Beam Outer Radius $$(r_0  $$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=222.5, step=0.01)
+    Bessel_in_thickness = cm9.slider(r'''Inner gaussian beam radius $$(r_1$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=100.0, step=0.01)
+    Bessel_out_thickness = cm9.slider(r'''Beam ring half thickness $$(r_2$$ $$\mu m)$$''', min_value=1.0, max_value=100.0, value=16.5, step=0.01)
 
     # c_Ring = cm9.slider(r'$c \, \, [\mu m]$', min_value=10.0, max_value=500.0, value=70.0, step=0.01)
     # c_Ring = 70.0
-
+    k_Bessel = cm9.slider(r'''Constant $$(k )$$''', min_value=0.0000001, max_value=10.0, value=4.2, step=0.0001)
     A_Bessel = cm9.slider(r'''Constant $$(A )$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
-    # B_Bessel = cm9.slider(r'''Constant $$(B)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
+    C_Bessel = cm9.slider(r'''Constant $$(C )$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.0001)
     C1_Bessel = cm9.slider(r'''Constant $$(C_1)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.0001)
     C2_Bessel = cm9.slider(r'''Constant $$(C_2)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.0001)
     i_Bessel = cm9.slider('Cmap  ', min_value=0, max_value=9, value=7, step=1)
 
-    fig_Bessel, Q_Bessel = plot_bessel_heat_distribution(P1_Bessel, P2_Bessel, eta_Bessel, Bessel_radius, Bessel_in_thickness, Bessel_out_thickness, A_Bessel, C1_Bessel, C2_Bessel, i_Bessel )
+    fig_Bessel, Q_Bessel, Q1_max, Q2_max = plot_bessel_heat_distribution(P1_Bessel, P2_Bessel, eta_Bessel, Bessel_radius, Bessel_in_thickness, Bessel_out_thickness, k_Bessel,  A_Bessel, C_Bessel, C1_Bessel, C2_Bessel, i_Bessel )
 
-    cm10.title(r'$Q_1 =  \frac{AP_1\eta}{\sqrt{2\pi ^3} r_1^2} \exp\left[-C_1\left(\frac{r^2}{2r_1^2}\right)\right]$')
-    cm10.title(r'$Q_2 =  \frac{AP_2\eta}{\sqrt{2\pi ^3} r_2^2 \text{Y}(r_0,r_2)} \exp\left[-C_2\left(\frac{(r-r_0)^2}{2r_2^2}\right)\right]$')
+    cm10.title(r'$Q = Q_1 + Q_2$')
+    cm10.title(r'$Q_1 = \frac{A^{1/k}k}{\Gamma(1/k)} \frac{P_1\eta C}{\sqrt{2\pi ^3} r_1^2} \exp\left[-C_1\left(\frac{r^2}{2r_1^2}\right)^k\right]$')
+    cm10.title(r'$Q_2 =  \frac{P_2\eta C}{\sqrt{2\pi ^3} r_2^2 \text{Y}(r_0,r_2)} \exp\left[-C_2\left(\frac{(r-r_0)^2}{2r_2^2}\right)\right]$')
     cm10.title(r'$\text{Y}(r_0,r_2) =  \exp\left(\frac{-r_0^2}{2r_2^2}\right) +\frac{r_0}{r_2}\sqrt{\frac{\pi}{2}}\, \text{erfc}(\frac{-r_0}{\sqrt{2}r_2}) $')
-    cm10.header(r'$Q_{peak} =  Q_1 + Q_2  =$  '+f'{np.max(Q_Bessel):.3e}'+r'  $W/m^2$')
+    cm10.header(r'$Q_{peak} $ = ' + f'{Q_Bessel:.3e}'+r'  $W/m^2$')
+    cm10.write(r'Q$_1^{peak}$: '+f'{np.max(Q1_max):.3e}'+r'  $W/m^2$')
+    cm10.write(r'Q$_2^{peak}$: '+f'{np.max(Q2_max):.3e}'+r'  $W/m^2$')
+
     cm10.plotly_chart(fig_Bessel, use_container_width=True)
     st.divider()
 
