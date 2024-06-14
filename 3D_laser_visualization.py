@@ -12,6 +12,7 @@ url1 = 'https://link.springer.com/article/10.1007/s11837-023-06363-8' # Bessel, 
 url2 = 'https://doi.org/10.1080/17445302.2014.937059' # Double Ellipsoide
 url3 = 'https://doi.org/10.1080/17452759.2024.2308513' # Super Gaussian
 url4 = 'https://doi.org/10.1016/j.matpr.2020.12.842' # Volumetric Gaussian
+url5 = 'https://doi.org/10.1016/j.jmatprotec.2018.03.011' # Super Gaussian Eqn 3
 st.write(f'Reference for Equations used in visualization of laser heat soruces: [Super Gaussian]({url3}), [Double ]({url2}) [Ellipsoide]({url4}), [Ring]({url1}), [Bessel]({url1})')
 
 ############################################################
@@ -47,7 +48,7 @@ with st.expander('Click for: Super-Gaussian Laser Heat Source with Gamma Functio
     beam_radius = cm1.slider(r'''Beam Radius $$(r_0$$ $$\mu m)$$''', min_value=100.0, max_value=500.0, value=122.5, step=0.01)
     A = cm1.slider(r'''Constant $$(A)$$''', min_value=0.00001, max_value=5.0, value=2.0, step=0.0001)
     C = cm1.slider(r'''Constant $$(C)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.0001)
-    k = cm1.slider(r'''Constant $$(k)$$''', min_value=0.0000001, max_value=10.0, value=3.0, step=0.0001)
+    k = cm1.slider(r'''Constant $$(k)$$''', min_value=0.0000001, max_value=10.0, value=1.0, step=0.0001)
     i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
 
     fig, Q = plot_gaussian_heat_distribution(A, C, k, power, eta, beam_radius, i)
