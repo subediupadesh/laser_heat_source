@@ -53,7 +53,7 @@ def __main__():
 
     fig, Q = plot_gaussian_heat_distribution(A, Ca, Cb, power, eta, beam_radius, i)
 
-    cm2.header(r'$Q =  \frac{C_aAP\eta}{\pi r_G^2 } \exp\left[-C(\frac{r^2}{r_0^2})\right]$')
+    cm2.header(r'$Q =  \frac{C_aAP\eta}{\pi r_G^2 } \exp\left[-C(\frac{r^2}{r_G^2})\right]$')
     
     cm2.plotly_chart(fig, use_container_width=True)
     st.divider()
