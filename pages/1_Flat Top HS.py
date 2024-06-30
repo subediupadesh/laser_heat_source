@@ -52,7 +52,7 @@ def __main__():
     fig, Q = plot_gaussian_heat_distribution(A, Ca, Cb, k, power, eta, beam_radius, i)
 
     cm3, cm4 = cm2.columns([0.5,0.5])
-    cm3.header(r'$Q =  \frac{(C_a)^{1/k}kAP\eta}{\pi r_o^2 \Gamma(1/k)} \exp\left[-C(\frac{r^2}{r_o^2})^{k}\right]$')
+    cm3.header(r'$Q =  \frac{(C_a)^{1/k}kAP\eta}{\pi r_G^2 \Gamma(1/k)} \exp\left[-C(\frac{r^2}{r_G^2})^{k}\right]$')
     cm4.header(r'$\Gamma(1/k) =  \int_0^\infty t^{\frac{1}{k}-1} e^{-t} dt$')
     # cm2.header(r'$Q_{peak} =$  '+f'{np.max(Q):.3e}'+r'  $W/m^2$')
 
