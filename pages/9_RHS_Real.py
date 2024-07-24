@@ -19,9 +19,9 @@ def __main__():
     cm1, cm2 = st.columns([0.2,0.8])
 
 
-    def plot_ring_heat_distribution(P, eta, r_0, r_t, A, Ca, Cb, i ):
+    def plot_ring_heat_distribution(P, eta, r_0, r_t, A, Ca, Cb, factor, i ):
         r0, rt = r_0*1.0e-6, r_t*1.0e-6  # scaling unit to micro meter
-
+        A = A*1e7/1e6
         cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
         
         x = np.linspace(-100e-6, 100e-6, 200)
@@ -30,12 +30,11 @@ def __main__():
 
 
         r = (x**2 + y**2)**0.5
-        F = np.where(r_0 + rt - r < 0, 0, 1)
+        F = np.where(r_0 + rt - r < 0, 0, 1)*factor
         # Y = np.exp(-r0**2/(2*rt**2)) + (r0/rt)*(np.pi/2)**0.5 * math.erfc(-r0/(rt*2**0.5))
         Y = np.exp(-2*r0**2/(rt**2)) + (2*r0/rt)*(np.pi/2)**0.5 * math.erfc(-r0*2**0.5/(rt))
 
         Q = F*((Ca*A*P*eta)/(np.pi*rt**2 * Y)) * (np.exp(-Cb*((r-r0)**2/(rt**2))))
-        # Q1 = F*((Ca*A*P*eta)/(np.sqrt(2*np.pi**3)*rt**2 * Y)) * (np.exp(-Cb*((r-r0)**2/(2*rt**2))))
         cm1.write('Cmap: '+cmaps[i])
         cm1.write(r'$Q_{peak} =$  '+f'{np.max(Q):.3e}'+r'  $W/m^2$')
 
@@ -48,16 +47,17 @@ def __main__():
 
 
     cm1.header('Parameters')
-    power = cm1.slider(r'''Power $$(P)$$''', min_value=1, max_value=500, value=250, step=1)
-    eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.9, step=0.01)
+    power = cm1.slider(r'''Power $$(P) \, W $$''', min_value=1.0, max_value=500.0, value=250.0, step=1.0)
+    eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.8, step=0.01)
     beam_radius = cm1.slider(r'''Ring Radius $$(r_r$$ $$\mu m)$$''', min_value=10.0, max_value=75.0, value=50.0, step=0.1)
-    beam_half_thickness = cm1.slider(r'''Beam half thickness $$(r_t$$ $$\mu m)$$''', min_value=1.0, max_value=25.0, value=5.0, step=0.1)
-    A = cm1.slider(r'''Absorptivity $$(A)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.1)
-    Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
+    beam_half_thickness = cm1.slider(r'''Ring Beam thickness $$(r_t$$ $$\mu m)$$''', min_value=1.0, max_value=25.0, value=5.0, step=0.1)
+    A = cm1.slider(r'''Absorptivity $$(A \times 10^7/m)$$''', min_value=0.00001, max_value=20.0, value=8.50, step=0.1)
+    Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=1.595769122, step=0.1)
     Cb = cm1.slider(r'''Constant $$(C_b)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
     i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
+    factor = 1.0e-4
 
-    fig, Q = plot_ring_heat_distribution(power, eta, beam_radius, beam_half_thickness, A, Ca, Cb, i)
+    fig, Q = plot_ring_heat_distribution(power, eta, beam_radius, beam_half_thickness, A, Ca, Cb, factor, i)
 
     
     cm2.header(r'$Q =  \frac{C_aAP\eta}{\pi r_t^2 \text{Y}(r_r,r_t)} \exp\left[-C_b\left(\frac{(r-r_r)^2}{r_t^2}\right)\right]$')

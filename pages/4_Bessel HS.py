@@ -11,11 +11,11 @@ url1 = 'https://link.springer.com/article/10.1007/s11837-023-06363-8' # Bessel, 
 url2 = 'https://doi.org/10.1080/17445302.2014.937059' # Double Ellipsoide
 url3 = 'https://doi.org/10.1080/17452759.2024.2308513' # Super Gaussian
 url4 = 'https://doi.org/10.1016/j.matpr.2020.12.842' # Volumetric Gaussian
-
+url5 = 'https://www.sciencedirect.com/science/article/pii/S0079672714000317' # Bessel with multiple ring
 
 def __main__():
 
-    st.title(f'[Bessel Heat Source]({url1})')
+    st.title(f'[Bessel]({url1}) [ Heat Source]({url5})')
     cm1, cm2 = st.columns([0.2,0.8])
 
     def plot_bessel_heat_distribution(a0, a1, a2, P, eta, r_g, rr_1, r_t1, rr_2, r_t2, rr_3, r_t3, k, A, C1, C2, i ):
@@ -74,8 +74,8 @@ def __main__():
     
     k_Bessel = cm1.slider(r'''SGaussian Order $$(k )$$''', min_value=0.1, max_value=10.0, value=1.0, step=0.1)
     A_Bessel = cm1.slider(r'''Absorptivity $$(A )$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.1)
-    C1_Bessel = cm1.slider(r'''Constant $$(C_1)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
-    C2_Bessel = cm1.slider(r'''Constant $$(C_2)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
+    C1_Bessel = cm1.slider(r'''Constant $$(C_1)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
+    C2_Bessel = cm1.slider(r'''Constant $$(C_2)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
     i_Bessel = cm1.slider('Cmap  ', min_value=0, max_value=9, value=7, step=1)
 
     fig_Bessel = plot_bessel_heat_distribution(a1, a2, a3, P_Bessel, eta_Bessel, Bessel_gaussian_radius, BRing1Radius, Ring1_HalfThickness, BRing2Radius, Ring2_HalfThickness, BRing3Radius, Ring3_HalfThickness,  k_Bessel, A_Bessel, C1_Bessel, C2_Bessel, i_Bessel, )

@@ -44,8 +44,8 @@ def __main__():
     eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.9, step=0.01)
     beam_radius = cm1.slider(r'''Beam Radius $$(r_G$$ $$\mu m)$$''', min_value=10.0, max_value=75.0, value=50.0, step=0.1)
     A = cm1.slider(r'''Absorptivity $$(A)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.1)
-    Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
-    Cb = cm1.slider(r'''Constant $$(C_b)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
+    Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
+    Cb = cm1.slider(r'''Constant $$(C_b)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
     k = cm1.slider(r'''Constant $$(k)$$''', min_value=0.0000001, max_value=10.0, value=4.2, step=0.1)
     i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
 

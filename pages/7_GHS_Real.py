@@ -18,8 +18,9 @@ def __main__():
     st.title(f'[Gaussian Heat Source]({url3})')
     cm1, cm2 = st.columns([0.2,0.8])
 
-    def plot_gaussian_heat_distribution(A, Ca, Cb, P, eta, r_G, i):
+    def plot_gaussian_heat_distribution(A, Ca, Cb, P, eta, r_G, factor, i):
         rG = r_G*1.0e-6 ## converting to meter
+        A = A*1e7/1e6
 
         cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
         x = np.linspace(-100e-6, 100e-6, 100)
@@ -27,7 +28,7 @@ def __main__():
         x, y = np.meshgrid(x, y)
 
         r = (x**2 + y**2)**0.5
-        F = np.where(r_G - r < 0, 0, 1)
+        F = np.where(r_G - r < 0, 0, 1) * factor
         
         Q = F*((Ca*A*P*eta)/(np.pi*rG**2))*(np.exp(-Cb*(r**2/rG**2)))
         
@@ -43,15 +44,16 @@ def __main__():
         return fig, Q
 
     cm1.header('Parameters')
-    power = cm1.slider(r'''Power $$(P)$$''', min_value=1, max_value=500, value=250, step=1)
-    eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.9, step=0.01)
+    power = cm1.slider(r'''Power $$(P) \, W $$''', min_value=1, max_value=500, value=250, step=1)
+    eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.8, step=0.01)
     beam_radius = cm1.slider(r'''Beam Radius $$(r_G$$ $$\mu m)$$''', min_value=10.0, max_value=75.0, value=50.0, step=0.1)
-    A = cm1.slider(r'''Absorptivity $$(A)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.1)
-    Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
-    Cb = cm1.slider(r'''Constant $$(C_b)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
+    A = cm1.slider(r'''Absorptivity $$(A \times 10^7/m)$$''', min_value=0.00001, max_value=20.0, value=8.50, step=0.1)
+    Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=1.595769122, step=0.1)
+    Cb = cm1.slider(r'''Constant $$(C_b)$$''', min_value=0.0000001, max_value=4.0, value=2.0, step=0.1)
     i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
+    factor = 1.0e-4
 
-    fig, Q = plot_gaussian_heat_distribution(A, Ca, Cb, power, eta, beam_radius, i)
+    fig, Q = plot_gaussian_heat_distribution(A, Ca, Cb, power, eta, beam_radius, factor, i)
 
     cm2.header(r'$Q =  \frac{C_aAP\eta}{\pi r_G^2 } \exp\left[-C_b(\frac{r^2}{r_G^2})\right]$')
     

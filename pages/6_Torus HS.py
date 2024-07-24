@@ -15,47 +15,63 @@ url4 = 'https://doi.org/10.1016/j.matpr.2020.12.842' # Volumetric Gaussian
 
 def __main__():
 
-    st.title(f'[Gaussian Heat Source]({url3})')
+    st.title(f'[Ring Heat Source]({url1})')
     cm1, cm2 = st.columns([0.2,0.8])
 
-    def plot_gaussian_heat_distribution(A, Ca, Cb, P, eta, r_G, i):
-        rG = r_G*1.0e-6 ## converting to meter
+
+    def plot_ring_heat_distribution(P, eta, r_0, r_t, A, Ca, Cb, i ):
+        r0, rt = r_0*1.0e-6, r_t*1.0e-6  # scaling unit to micro meter
 
         cmaps = ['balance', 'bluered', 'hsv', 'jet', 'picnic', 'portland', 'rainbow', 'rdylbu_r', 'spectral_r', 'turbo']
-        x = np.linspace(-100e-6, 100e-6, 100)
-        y = np.linspace(-100e-6, 100e-6, 100)
-        x, y = np.meshgrid(x, y)
+        
+        x = np.linspace(-100e-6, 100e-6, 200)
+        y = np.linspace(-100e-6, 100e-6, 200)
+        x, y= np.meshgrid(x, y)
+
 
         r = (x**2 + y**2)**0.5
-        F = np.where(r_G - r < 0, 0, 1)
+        F = np.where(r_0 + rt - r < 0, 0, 1)
+        Y = np.exp(-r0**2/(2*rt**2)) + (r0/rt)*(np.pi/2)**0.5 * math.erfc(-r0/(rt*2**0.5))
+        Y = 1
         
-        Q = F*((Ca*A*P*eta)/(np.pi*rG**2))*(np.exp(-Cb*(r**2/rG**2)))
-        
-        cm1.write('Colormap: '+cmaps[i])
-        cm1.write(r'$Q_{peak} =$  '+f'{np.max(Q):.3e}'+r'  $W/m^2$')
-        
-        camera = dict(eye=dict(x=1.5, y=1.5, z=1.5))
+        Exp1 = np.exp(-Cb*((r-r0)**2/(rt**2)))
+        Exp2 = np.exp(-Cb*((r+r0)**2/(rt**2)))
+        # Exp2 = 0
 
+        # Q = F*((Ca*A*P*eta)/(np.pi*rt**2)) * ( Exp1 + Exp2 )
+        # Q = F*((Ca*A*P*eta)/((np.pi*rt**2) * (np.exp(-3*(r0/rt)**2) + (3*np.pi)**0.5 * (r0/rt)*(1+ math.erfc(3**0.5*(r0/rt)) )))) * np.exp(-3*((r-r0)**2/(rt**2)))
+        Q = F*((Ca*A*P*eta)/(np.pi*rt**2 * Y)) * (np.exp(-Cb*((r-r0)**2/(rt**2))))
+        # Q1 = F*((Ca*A*P*eta)/(np.sqrt(2*np.pi**3)*rt**2 * Y)) * (np.exp(-Cb*((r-r0)**2/(2*rt**2))))
+        cm1.write('Cmap: '+cmaps[i])
+        cm1.write(r'$Q_{peak} =$  '+f'{np.max(Q):.3e}'+r'  $W/m^2$')
+        cm1.write(r'Y =  '+f'{Y:.3f}')
+
+        camera = dict(eye=dict(x=1.5, y=1.5, z=1.5))
         fig = go.Figure(data=[go.Surface(z=Q, x=x, y=y, colorscale=cmaps[i])])
         fig.update_layout(scene_camera=camera, scene=dict(xaxis_title='X-axis', yaxis_title='Y-axis', zaxis_title='Intensity'), width=2000, height=1000) 
-        # fig.update_coloraxes(colorbar=dict(exponentformat='e', thickness=100))
         fig.update_traces(colorbar=dict(title=r'Q W/m^2'), colorbar_title_font=dict(size=30, color='black'), colorbar_exponentformat='B', colorbar_nticks=6, colorbar_len=0.5, colorbar_borderwidth=0.0, colorbar_thickness=70, colorbar_orientation='v', colorbar_tickfont=dict(family='Sans', color='black', size=25))
+
         return fig, Q
+
 
     cm1.header('Parameters')
     power = cm1.slider(r'''Power $$(P)$$''', min_value=1, max_value=500, value=250, step=1)
     eta = cm1.slider(r'''Efficiency $$(\eta)$$ ''', min_value=0.0, max_value=1.0, value=0.9, step=0.01)
-    beam_radius = cm1.slider(r'''Beam Radius $$(r_G$$ $$\mu m)$$''', min_value=10.0, max_value=75.0, value=50.0, step=0.1)
+    beam_radius = cm1.slider(r'''Ring Radius $$(r_r$$ $$\mu m)$$''', min_value=10.0, max_value=75.0, value=40.0, step=0.1)
+    beam_half_thickness = cm1.slider(r'''Beam half thickness $$(r_t$$ $$\mu m)$$''', min_value=1.0, max_value=25.0, value=10.0, step=0.1)
     A = cm1.slider(r'''Absorptivity $$(A)$$''', min_value=0.00001, max_value=5.0, value=1.0, step=0.1)
     Ca = cm1.slider(r'''Constant $$(C_a)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
     Cb = cm1.slider(r'''Constant $$(C_b)$$''', min_value=0.0000001, max_value=4.0, value=1.0, step=0.1)
     i = cm1.slider('colormap', min_value=0, max_value=9, value=6, step=1)
 
-    fig, Q = plot_gaussian_heat_distribution(A, Ca, Cb, power, eta, beam_radius, i)
+    fig, Q = plot_ring_heat_distribution(power, eta, beam_radius, beam_half_thickness, A, Ca, Cb, i)
 
-    cm2.header(r'$Q =  \frac{C_aAP\eta}{\pi r_G^2 } \exp\left[-C_b(\frac{r^2}{r_G^2})\right]$')
+    
+    cm2.header(r'$Q =  \frac{C_aAP\eta}{\pi r_t^2 \text{Y}(r_r,r_t)} \exp\left[-C_b\left(\frac{(r-r_r)^2}{r_t^2}\right)\right]$')
+    cm2.write(r'$\text{Y}(r_r,r_t) =  \exp\left(\frac{-r_r^2}{2r_t^2}\right) +\frac{r_r}{r_t}\sqrt{\frac{\pi}{2}}\, \text{erfc}(\frac{-r_r}{\sqrt{2}r_t}) $')
     
     cm2.plotly_chart(fig, use_container_width=True)
+
     st.divider()
 
 __main__()
