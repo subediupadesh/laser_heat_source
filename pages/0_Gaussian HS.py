@@ -60,8 +60,7 @@ def __main__():
 
     st.markdown(
     """
-    **Subedi, U., Moelans, N., Tański, T., & Kunwar, A. (2025).**  
-    *A non-isothermal multi-phase field approach to model the meltpool and IMC grains interaction in Ti-Au material.*  
+    **Subedi, U., Moelans, N., Tański, T., & Kunwar, A. (2025).** *A non-isothermal multi-phase field approach to model the meltpool and IMC grains interaction in Ti-Au material.*  
     **Computational Materials Science, 255**, 113875.  
     [https://doi.org/10.1016/j.commatsci.2025.113875](https://doi.org/10.1016/j.commatsci.2025.113875)
     """,
