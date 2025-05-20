@@ -16,3 +16,14 @@ url5 = 'https://doi.org/10.1016/j.jmatprotec.2018.03.011' # Super Gaussian Eqn 3
 url6 = 'https://www.sciencedirect.com/science/article/pii/S0079672714000317' # Bessel with multiple ring
 st.write(f'Reference for Equations used in visualization of laser heat soruces: [Gaussian]({url3}),[Flat Top]({url3}) [| Super Gaussian]({url5}), [Double ]({url2}) [Ellipsoide]({url4}), [Ring]({url1}), [Bessel]({url6})')
 
+st.markdown(
+    """
+    ### 📄 Please cite our paper if you use the laser beam visualization toolkit:
+
+    **Subedi, U., Moelans, N., Tański, T., & Kunwar, A. (2025).**  
+    *A non-isothermal multi-phase field approach to model the meltpool and IMC grains interaction in Ti-Au material.*  
+    **Computational Materials Science, 255**, 113875.  
+    [https://doi.org/10.1016/j.commatsci.2025.113875](https://doi.org/10.1016/j.commatsci.2025.113875)
+    """,
+    unsafe_allow_html=True
+)
