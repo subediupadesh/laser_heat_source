@@ -18,7 +18,7 @@ st.write(f'Reference for Equations used in visualization of laser heat soruces: 
 
 st.markdown(
     """
-    **Please cite our paper if you use the laser beam visualization toolkit:**  
+    ### 📄 Please cite our paper if you use the laser beam visualization toolkit:
     **Subedi, U., Moelans, N., Tański, T., & Kunwar, A. (2025).** 
     [*A non-isothermal multi-phase field approach to model the meltpool and IMC grains interaction in Ti-Au material*](https://www.sciencedirect.com/science/article/pii/S0927025625002186). 
     **Computational Materials Science, 255**, 113875. 
